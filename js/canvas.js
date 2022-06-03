@@ -19,13 +19,8 @@ class Vector {
         return new Vector(this.x - v.x, this.y - v.y);
     }
 
-    scalarMultiplication(multiple) {
-        //数乘
-        return new Vector(this.x * multiple, this.y * multiple);
-    }
-
-    innerProduct(v) {
-        //数量积
+    dot(v) {
+        //数量积（点积）
         return this.x * v.x + this.y * v.y;
     }
 
@@ -34,19 +29,23 @@ class Vector {
         return Math.sqrt(this.x ^ 2 + this.y ^ 2);
     }
 
-    scale(v) {
-        //以一个向量进行缩放
-        return new Vector(this.x * v.x, this.y * v.y);
+    scale(x) {
+        //数乘或者缩放，可接受数字或向量
+        if (x.x != undefined && x.y != undefined) {
+            return new Vector(this.x * x.x, this.y * x.y);
+        } else {
+            return new Vector(this.x * x, this.y * y);
+        }
     }
 
     arc() {
-        //角度（弧度制）
-        return Math.atan2(this.y, this.x)
+        //方向（弧度制）
+        return Math.atan2(this.y, this.x);
     }
 
     angle() {
-        //角度（角度制）
-        return this.arc() * (180 / Math.PI)
+        //方向（角度制）
+        return this.arc() * (180 / Math.PI);
     }
 }
 
@@ -58,20 +57,20 @@ var canvasSize = new Vector(1080, 720);
 class Camera {
     //摄像机类
 
-    constructor(p = new Vector(), scale = 0) {
-        //Vector p, Number scale
-        this.p = p;
-        this.scale = scale;
+    constructor(p = new Vector(), s = 0) {
+        //Vector p, Number s
+        this.position = p;
+        this.scale = s;
     }
 
     moveTo(p = new Vector()) {
         //移动摄像机（坐标）
-        this.p = p
+        this.position = p;
     }
 
     moveBy(v) {
         //移动摄像机（向量）
-        this.p += this.p.plus(v)
+        this.position += this.position.plus(v);
     }
 
     scaleTo(scale = 1) {
@@ -90,60 +89,12 @@ class Camera {
     }
 
     getPosition(p) {
-        //获取p点在canvas上的位置（转换为绘图坐标系）
+        //获取p点在canvas上的位置（转换为屏幕坐标系）
         var s = new Vector(canvasSize.x / cameraSize.x, canvasSize.y / cameraSize.y);
-        var x = s * (cameraSize.x / 2 + this.scale * (p.x - this.p.x));
-        var y = s * (cameraSize.y / 2 - this.scale * (p.y - this.p.y));
+        var x = s * (cameraSize.x / 2 + this.scale * (p.x - this.position.x));
+        var y = s * (cameraSize.y / 2 - this.scale * (p.y - this.position.y));
         return new Vector(x, y);
     }
 }
 
 var defaultCamera = new Camera();
-
-function getFloatedGrid(cp, a) {
-    //根据光标位置算出光标所在的格子在棋盘中的坐标
-    //cp = cursor position
-    //a是正六边形边长的一半
-    var tp = new Vector((cp.x / Math.sqrt(3) * a + (cp.y / a - 2) / 3) / 2 - 1, (cp.y / a - 2) / 3);
-    var gp = new Vector(Math.round(tp.x), Math.round(tp.y));//grid position
-    //transformed position，把光标坐标转换到棋盘坐标系
-    var lines = {
-        k: {k: 0, b: gp.y},
-        l: {k: -1, b: gp.x + gp.y},
-        m: {k: 0.5, b: -0.5 * gp.x + g.y + 0.5},
-        n: {k: 2, b: -2 * gp.x + gp.y + 1},
-        p: {k: 0.5, b: -0.5 * gp.x + g.y - 0.5},
-        q: {k: 2, b: gp.x + gp.y - 1}
-    };
-    
-    function f(l) {
-        //算出点tp是否在一条直线（点斜式）的上方
-        return tp.y > l.k * tp.x + l.b
-    };
-    
-    var offset = new Vector();
-    
-    if (f(lines.k)) {
-        if (f(lines.l)) {
-            if (f(lines.m)) {
-                offset = new Vector(0, 1);
-            }
-        } else {
-            if (f(lines.n)) {
-                offset = new Vector(-1, 0);
-            }
-        }
-    } else {
-        if (f(lines.l)) {
-            if (!f(lines.q)) {
-                offset = new Vector(1, 0);
-            }
-        } else {
-            if (!f(lines.p)) {
-                offset = new Vector(0, -1);
-            }
-        }
-    };
-    
-    return gp.plus(offset);
-}
