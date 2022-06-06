@@ -8,24 +8,41 @@ var textures = {
     MythoniaTeam: 0
 };
 
-textureAmount = 0;
-loadedTextureAmount = 0;
+var sounds = {};
 
-function onloadTexture() {
-    console.log("Loading textures : " + ++loadedTextureAmount + "/" + textureAmount);
-    if (loadedTextureAmount == textureAmount) {
+var music = {};
+
+function getAmount(obj) {
+    var count = 0;
+    for (var i in obj) {
+        if (typeof obj[i] == "object" && obj[i] != null) {
+            count += getAmount(obj[i]);
+        } else {
+            count += 1;
+        };
+    };
+    return count;
+};
+
+assetAmount = getAmount(textures) + getAmount(sounds) + getAmount(music);
+loadedAssetAmount = 0;
+
+function onloadAsset() {
+    console.log("Loading assets : " + ++loadedAssetAmount + "/" + assetAmount);
+    if (loadedAssetAmount == assetAmount) {
         main();
     };
 };
 
+//——————分割线——————
+
 function loadTextures(textureDict, path) {
-    for (i in textureDict) {
+    for (var i in textureDict) {
         if (typeof textureDict[i] == "number") {
             img = new Image();
-            img.onload = onloadTexture;
+            img.onload = onloadAsset;
             img.src = path.join("/") + "/" + i + [".svg", ".png"][textureDict[i]];
             textureDict[i] = img;
-            textureAmount++;
         } else if (typeof textureDict[i] == "object") {
             path.push(i);
             loadTextures(textureDict[i], path);
@@ -34,14 +51,11 @@ function loadTextures(textureDict, path) {
     };
 };
 
-//——————分割线——————
-
-var sounds = {};
-
 function loadSounds(soundDict, path) {
-    for (i in soundDict) {
+    for (var i in soundDict) {
         if (typeof soundDict[i] == "number") {
             var sound = new Audio();
+            sound.onload = onloadAsset;
             sound.src = path.join("/") + "/" + i + [".mp3", ".wav"][soundDict[i]];
             soundDict[i] = sound;
         } else if (typeof soundDict[i] == "object") {
@@ -52,14 +66,17 @@ function loadSounds(soundDict, path) {
     };
 };
 
-//——————分割线——————
-
-var music = [];
-
 function loadMusic(musicList) {
-    for (i = 0; i < musicList.length; i++) {
+    for (var i in musicList) {
         var mus = new Audio();
+        mus.onload = onloadAsset;
         mus.src = "../assets/backgroundMusic/" + musicList[i] + ".mp3";
         musicList[i] = mus;
     };
 };
+
+function loadAssets() {
+    loadTextures(textures, ["assets", "textures"]);
+    loadSounds(sounds, ["assets", "sounds"]);
+    loadMusic(music);
+}
