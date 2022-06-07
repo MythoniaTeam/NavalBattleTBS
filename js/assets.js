@@ -5,12 +5,16 @@
  */
 
 var textures = {
-    MythoniaTeam: 0
+    MythoniaTeam: 1
 };
 
-var sounds = {};
+var sounds = {
+    test: 0
+};
 
-var music = {};
+var music = {
+    test: 0
+};
 
 function getAmount(obj) {
     var count = 0;
@@ -55,7 +59,7 @@ function loadSounds(soundDict, path) {
     for (var i in soundDict) {
         if (typeof soundDict[i] == "number") {
             var sound = new Audio();
-            sound.onload = onloadAsset;
+            sound.oncanplaythrough = onloadAsset;
             sound.src = path.join("/") + "/" + i + [".mp3", ".wav"][soundDict[i]];
             soundDict[i] = sound;
         } else if (typeof soundDict[i] == "object") {
@@ -69,8 +73,8 @@ function loadSounds(soundDict, path) {
 function loadMusic(musicList) {
     for (var i in musicList) {
         var mus = new Audio();
-        mus.onload = onloadAsset;
-        mus.src = "../assets/backgroundMusic/" + musicList[i] + ".mp3";
+        mus.src = "assets/music/" + i + ".mp3";
+        mus.oncanplaythrough = onloadAsset;
         musicList[i] = mus;
     };
 };
