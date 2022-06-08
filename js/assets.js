@@ -5,11 +5,15 @@
  */
 
 var textures = {
-    MythoniaTeam: 1
+    MythoniaTeam: {
+        Background: 0,
+        Dimming: 0,
+        Glowing: 0
+    }
 };
 
 var sounds = {
-    test: 0
+    click: 0
 };
 
 var music = {
@@ -17,6 +21,7 @@ var music = {
 };
 
 function getAmount(obj) {
+    //获取一个树结构对象所含成员的数量
     var count = 0;
     for (var i in obj) {
         if (typeof obj[i] == "object" && obj[i] != null) {
@@ -34,7 +39,12 @@ loadedAssetAmount = 0;
 function onloadAsset() {
     console.log("Loading assets : " + ++loadedAssetAmount + "/" + assetAmount);
     if (loadedAssetAmount == assetAmount) {
-        main();
+        var b = document.getElementById("startGame");
+        b.innerHTML = "点此开始游戏";
+        b.onclick = function() {
+            this.style.display = "none";
+            main();
+        }
     };
 };
 
@@ -73,6 +83,7 @@ function loadSounds(soundDict, path) {
 function loadMusic(musicList) {
     for (var i in musicList) {
         var mus = new Audio();
+        mus.loop = "loop";
         mus.src = "assets/music/" + i + ".mp3";
         mus.oncanplaythrough = onloadAsset;
         musicList[i] = mus;

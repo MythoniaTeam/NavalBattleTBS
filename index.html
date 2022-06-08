@@ -8,14 +8,49 @@
     <body onload="loadAssets()">
 
         <div class="canvas">
-            <canvas width="1080" height="720" id="canvas"></canvas>
+            <canvas width="1280" height="720" id="canvas"></canvas>
         </div>
 
-        <script src="js/vector.js"></script>
+        <div class="console">
+            <div class="consoleInner">
+                <button id="startGame">加载中……</button>
+            </div>
+            <div class="consoleInner" id="fps"></div>
+            <div class="consoleInner">
+                <input type="text" value="new Vector(0, 0, 100)" id="cameraPosition"/>
+                <input type="text" value="new Vector(1, 1)" id="cameraScale"/>
+                <input type="text" value="0" id="cameraDirection"/>
+            </div>
+        </div>
+
+        <script src="js/transform.js"></script>
         <script src="js/canvas.js"></script>
         <script src="js/input.js"></script>
         <script src="js/assets.js"></script>
+        <script src="js/sprites/sprite.js"></script>
         <script src="js/main.js"></script>
+
+        <script>
+            function refreshFpsCounter() {
+                var s = "fps: {a}/{b} {c}%";
+                s = s.replace("{a}", Math.round(fps * 100) / 100);
+                s = s.replace("{b}", Math.round(1000 / frameDelay * 100) / 100);
+                s = s.replace("{c}", Math.round(fps / (1000 / frameDelay) * 100 * 100) / 100);
+                document.getElementById("fps").innerHTML = s;
+            };
+
+            refreshFpsCounter();
+
+            setInterval(refreshFpsCounter, 500);
+            
+            function refreshCameraController() {
+                spriteCamera.moveTo(eval(document.getElementById("cameraPosition").value));
+                spriteCamera.scaleTo(eval(document.getElementById("cameraScale").value));
+                spriteCamera.rotateToAngle(eval(document.getElementById("cameraDirection").value));
+            };
+            
+            setInterval(refreshCameraController, 50)
+        </script>
 
     </body>
 </html>
