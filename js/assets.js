@@ -6,9 +6,11 @@
 
 var textures = {
     MythoniaTeam: {
-        Background: 0,
-        Dimming: 0,
-        Glowing: 0
+        CoverBlack: 0,
+        CoverWhite: 0,
+        Dim: 0,
+        Glow: 0,
+        Shine: 0
     }
 };
 
