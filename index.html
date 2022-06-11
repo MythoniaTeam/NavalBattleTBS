@@ -8,7 +8,8 @@
     <body onload="loadAssets()">
 
         <div class="canvas">
-            <canvas width="1280" height="720" id="canvas"></canvas>
+            <canvas width="1280" height="720" id="mainCanvas"></canvas>
+            <canvas id="maskPainter"></canvas>
         </div>
 
         <div class="console">
@@ -17,9 +18,9 @@
             </div>
             <div class="consoleInner" id="fps"></div>
             <div class="consoleInner">
-                <input type="text" value="new Vector(0, 0, 100)" id="cameraPosition"/>
-                <input type="text" value="new Vector(1, 1)" id="cameraScale"/>
-                <input type="text" value="0" id="cameraDirection"/>
+                <input type="text" value="new Vector(0, 0, 100)" id="cameraPosition" />
+                <input type="text" value="new Vector(1, 1)" id="cameraScale" />
+                <input type="text" value="0" id="cameraDirection" />
             </div>
         </div>
 
@@ -42,13 +43,13 @@
             refreshFpsCounter();
 
             setInterval(refreshFpsCounter, 500);
-            
+
             function refreshCameraController() {
                 spriteCamera.moveTo(eval(document.getElementById("cameraPosition").value));
                 spriteCamera.scaleTo(eval(document.getElementById("cameraScale").value));
                 spriteCamera.rotateToAngle(eval(document.getElementById("cameraDirection").value));
             };
-            
+
             setInterval(refreshCameraController, 50)
         </script>
 

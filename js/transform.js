@@ -48,6 +48,7 @@ class Vector {
     }
 };
 
+
 class Transform {
     //类似隔壁unity的transform
     constructor(position = new Vector(), scale = new Vector(1, 1), direction = 0) {

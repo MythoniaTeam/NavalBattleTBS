@@ -1,51 +1,88 @@
 class Beginning extends Sprite {
     //开场动画
-    constructor(isPart = false) {
+    constructor() {
         super(new Transform(new Vector(), new Vector(10, 10)));
-        this.type = "beginning";
-        this.texture = textures.MythoniaTeam;
-        this.sound = sounds.click;
-        if (!isPart) {
-            this.parts = {
-                td: new Beginning(true),
-                tg: new Beginning(true)
-            };
-        }
     }
 
-    update(t) {
-        var g = Math.max((t - 240) / 60, 0);
-        this.draw(this.texture.Background, this.transform, g, "ui");
-        this.parts.td.update_dimming(t);
-        this.parts.tg.update_glowing(t);
-        if (t >= 300) {
-            this.remove();
-        }
-    }
+    init() {
+        this.type = "Beginning";
+        this.texture = textures.MythoniaTeam.Background;
+        this.parts.dimming = new Beginning_Dimming();
+        this.parts.glowing = new Beginning_Glowing();
 
-    update_dimming(t) {
-        if (10 <= t && t < 100) {
-            //10 ~ 50 - 淡入
-            //50 ~ 100 - 静止
-            var g = Math.max((50 - t) / 40, 0);
-            this.draw(this.texture.Dimming, this.transform, g, "ui");
-        }
-    }
+        this.behavior = {
+            default: function() {
+                this.drawUI();
+                this.behaveWhen(this.behavior.fadeOut, 300);
+            },
 
-    update_glowing(t) {
-        if (94 <= t && t < 180) {
-            //94 ~ 100 - 淡入
-            //100 ~ 180 - 静止
-            var g = Math.max((94 - t) / 6, 0);
-            this.draw(this.texture.Glowing, this.transform, g, "ui");
-            if (t == 94) {
-                this.sound.play();
-                console.log(1)
+            fadeOut: function() {
+                this.drawUI();
+                this.effects.ghost += 1 / 60;
+                this.removeWhen(60);
             }
-        } else if (180 <= t && t < 240) {
-            //淡出
-            var g = Math.max((t - 180) / 60, 0);
-            this.draw(this.texture.Glowing, this.transform, g, "ui");
         }
+
+        this.behave(this.behavior.default);
+    }
+};
+
+
+class Beginning_Dimming extends Beginning {
+    init() {
+        this.type = "Beginning_Dimming";
+        this.texture = textures.MythoniaTeam.Dimming;
+        this.effects.ghost = 1;
+
+        this.behavior = {
+            default: function() {
+                this.behaveWhen(this.behavior.fadeIn, 10);
+            },
+
+            fadeIn: function() {
+                this.drawUI();
+                this.effects.ghost -= 0.025;
+                this.removeWhen(120);
+            }
+        };
+
+        this.behave();
+    }
+}
+
+
+class Beginning_Glowing extends Beginning {
+    init() {
+        this.type = "Beginning_Glowing";
+        this.texture = textures.MythoniaTeam.Glowing;
+        this.sound = sounds.Click;
+        this.effects.brightness = 0.6;
+        
+        this.behavior = {
+            default: function() {
+                this.behaveWhen(this.behavior.flash, 120)
+            },
+
+            flash: function() {
+                this.drawUI();
+                if (this.timer == 0) {
+                    this.playSound();
+                };
+                if (this.effects.brightness > 0) {
+                    this.effects.brightness -= 0.01;
+                } else {
+                    this.effects.brightness = 0;
+                };
+                this.behaveWhen(this.behavior.fadeOut, 120)
+            },
+
+            fadeOut: function() {
+                this.drawUI();
+                this.effects.ghost += 1 / 60;
+                this.removeWhen(60);
+            }
+        };
+
+        this.behave();
     }
 };

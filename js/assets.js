@@ -5,6 +5,10 @@
  */
 
 var textures = {
+    Mask: {
+        Black: 1,
+        White: 1
+    },
     MythoniaTeam: {
         Background: 0,
         Dimming: 0,
@@ -13,11 +17,11 @@ var textures = {
 };
 
 var sounds = {
-    click: 0
+    Click: 0
 };
 
 var music = {
-    test: 0
+    Test: 0
 };
 
 function getAmount(obj) {

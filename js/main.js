@@ -3,47 +3,28 @@ var frameDelay = 17;
 var fps = 1000 / frameDelay;
 //fps指示器
 
-var spriteList = {
-    //存放所有正在运作的sprite
-    sprites: [],
+var mainSpriteTable = new SpriteTable();
 
-    clear: function() {
-        //直接删除所有sprite
-        this.sprites.length = 0;
-    },
-
-    add: function(sprite) {
-        //添加一个新的sprite
-        this.sprites.push(sprite);
-    },
-
-    update: function() {
-        //更新所有sprite
-        for (i = 0; i < this.sprites.length; i++) {
-            var s = this.sprites[i];
-            s.update(s.frameCounter);
-            s.clearParts();
-            if (s.toBeRemove) {
-                this.sprites.splice(i, 1);
-            };
-            s.frameCounter++;
-        };
+var options = {
+    volume: {
+        //音量大小，取[0,10]
+        BGM: 8,//背景音乐
+        SE: 8//音效
     }
-};
+}
 
-function update() {
+function mainUpdate() {
     //进行一帧的更新
     var t = new Date().getTime();
-    spriteList.update();
+    mainSpriteTable.update();
     ctx.clearRect(0, 0, canvasSize.x, canvasSize.y);
     canvasBuffer.draw();
     t = new Date().getTime() - t;
-    setTimeout(update, frameDelay - t);
-    fps = t <= frameDelay ? 1000 / frameDelay : 1000 / t;
+    setTimeout(mainUpdate, frameDelay - t);
+    fps = 1000 / (t <= frameDelay ? frameDelay : t);
 }
 
 function main() {
-    console.log("Loading complete.");
-    spriteList.add(new Beginning());
-    update();
+    mainSpriteTable.beginning = new Beginning();
+    mainUpdate();
 };
