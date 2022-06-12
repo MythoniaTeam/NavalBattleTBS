@@ -16,6 +16,7 @@ var options = {
 function mainUpdate() {
     //进行一帧的更新
     var t = new Date().getTime();
+    updateKeyState();
     mainSpriteTable.update();
     ctx.clearRect(0, 0, canvasSize.x, canvasSize.y);
     canvasBuffer.draw();
